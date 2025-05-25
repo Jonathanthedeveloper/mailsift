@@ -1,0 +1,65 @@
+generator client {
+  provider = "prisma-client-js"
+  // output   = "../generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  ADMIN
+  USER
+}
+
+model User {
+  id             String        @id @default(cuid())
+  email          String        @unique
+  password_hash  String
+  name           String
+  role           UserRole      @default(USER)
+  created_at     DateTime      @default(now())
+  updated_at     DateTime      @updatedAt
+  deleted_at     DateTime?
+  refresh_tokens RefreshToken?
+  api_keys       ApiKey[]
+  api_logs       ApiLog[]
+}
+
+model RefreshToken {
+  id         String   @id @default(cuid())
+  user_id    String   @unique
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  token      String   @unique
+  expires_at DateTime
+  created_at DateTime @default(now())
+}
+
+model ApiKey {
+  id         String    @id @default(cuid())
+  key        String    @unique
+  user_id    String
+  user       User      @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  name       String?
+  created_at DateTime  @default(now())
+  revoked_at DateTime?
+  logs       ApiLog[]
+}
+
+model ApiLog {
+  id            String   @id @default(cuid())
+  api_key_id    String
+  api_key       ApiKey   @relation(fields: [api_key_id], references: [id], onDelete: Cascade)
+  user_id       String
+  user          User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
+  endpoint      String
+  method        String
+  ip_address    String?
+  user_agent    String?
+  response      String?
+  response_time Int?
+  status_code   Int?
+  error         String?
+  created_at    DateTime @default(now())
+}
