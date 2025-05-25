@@ -2,6 +2,10 @@
 
 A backend service providing authentication, email validation, and API key management for Mail Sift.
 
+## Api Documentation
+
+You can find our detailed API documentation [here](https://documenter.getpostman.com/view/23284775/2sB2qcC11J). We've created comprehensive guides to help you integrate with our services easily.
+
 ## Features
 
 - **Authentication System**
